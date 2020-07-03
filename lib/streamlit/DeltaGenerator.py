@@ -1999,7 +1999,7 @@ class DeltaGenerator(object):
 
         # The widget always returns a float array, so fix the return type as necessary
         current_value = slider.fix_types(
-            floats_value, element.slider.data_type, orig_tz
+            current_value, element.slider.data_type, orig_tz
         )
         # If the original value was a list/tuple, return a tuple
         return tuple(current_value) if is_range else current_value[0]
