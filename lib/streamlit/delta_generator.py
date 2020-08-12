@@ -327,7 +327,7 @@ class DeltaGenerator(
         block_dg = DeltaGenerator(container=self._container, cursor=block_cursor)
 
         # Must be called to increment this cursor's index.
-        self._cursor.get_locked_cursor(None)
+        self._cursor.get_locked_cursor(last_index=None)
 
         _enqueue_message(msg)
 

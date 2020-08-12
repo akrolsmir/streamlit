@@ -104,6 +104,11 @@ class Block extends PureComponent<Props> {
     return elementsToRender
       .toArray()
       .map((reportElement: ReportElement, index: number): ReactNode | null => {
+        // TODO: why are there undefined elements?
+        if (!reportElement) {
+          return null
+        }
+
         const element = reportElement.get("element")
 
         if (element instanceof List) {

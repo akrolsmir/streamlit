@@ -56,6 +56,10 @@ export function applyDelta(
   const container =
     parentBlockContainer === BlockPath.Container.MAIN ? "main" : "sidebar"
   const deltaPath = [...parentBlockPath, metadata.deltaId]
+  // Hack inclusion of nested blocks [1, 0, 2] => [1, "element", 0, "element", 2]
+  let deltaPath: any[] = [...parentBlockPath, metadata.deltaId]
+  deltaPath = deltaPath.flatMap(path => [path, "element"])
+  deltaPath.pop()
 
   dispatchOneOf(delta, "type", {
     newElement: (element: SimpleElement) => {
@@ -77,7 +81,8 @@ export function applyDelta(
     newBlock: () => {
       elements[container] = elements[container].updateIn(
         deltaPath,
-        reportElement => handleNewBlockMessage(container, reportElement)
+        reportElement =>
+          handleNewBlockMessage(container, reportElement, reportId, metadata)
       )
     },
     addRows: (namedDataSet: NamedDataSet) => {
@@ -124,10 +129,17 @@ function handleNewElementMessage(
 
 function handleNewBlockMessage(
   container: Container,
-  reportElement: ReportElement
+  reportElement: ReportElement,
+  reportId: string,
+  metadata: IForwardMsgMetadata
 ): ReportElement {
   MetricsManager.current.incrementDeltaCounter(container)
   MetricsManager.current.incrementDeltaCounter("new block")
+
+  // TODO: isn't this always the case?
+  if (!reportElement) {
+    return ImmutableMap({ element: List(), reportId, metadata })
+  }
 
   if (reportElement.get("element") instanceof List) {
     return reportElement
