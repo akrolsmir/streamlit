@@ -127,7 +127,9 @@ _config.on_config_parsed(_update_logger, True)
 
 
 _main = _DeltaGenerator(container=_BlockPath_pb2.BlockPath.MAIN)
-sidebar = _DeltaGenerator(container=_BlockPath_pb2.BlockPath.SIDEBAR)
+sidebar = _DeltaGenerator(
+    container=_BlockPath_pb2.BlockPath.SIDEBAR, cursor=None, parent=_main
+)
 
 # DeltaGenerator methods:
 
@@ -183,6 +185,9 @@ beta_color_picker = _main.beta_color_picker  # noqa: E221
 beta_block = _main._block  # noqa: E221
 beta_columns = _main.columns  # noqa: E221
 beta_horizontal = _main.horizontal  # noqa: E221
+with_markdown = lambda *args, **kwargs: _main.get_with_dg().markdown(*args, **kwargs)
+with_write = lambda *args, **kwargs: _main.get_with_dg().write(*args, **kwargs)
+
 
 # Config
 
@@ -464,7 +469,8 @@ def echo(code_location="above"):
 
 def _transparent_write(*args):
     """This is just st.write, but returns the arguments you passed to it."""
-    write(*args)
+    # Used by "Magic" calls
+    with_write(*args)
     if len(args) == 1:
         return args[0]
     return args

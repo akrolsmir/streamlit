@@ -14,6 +14,7 @@
 
 """Allows us to create and absorb changes (aka Deltas) to elements."""
 
+from __future__ import annotations
 import functools
 
 from streamlit import caching
@@ -129,7 +130,9 @@ class DeltaGenerator(
     # The pydoc below is for user consumption, so it doesn't talk about
     # DeltaGenerator constructor parameters (which users should never use). For
     # those, see above.
-    def __init__(self, container=BlockPath_pb2.BlockPath.MAIN, cursor=None):
+    def __init__(
+        self, container=BlockPath_pb2.BlockPath.MAIN, cursor=None, parent=None
+    ):
         """Inserts or updates elements in Streamlit apps.
 
         As a user, you should never initialize this object by hand. Instead,
@@ -166,6 +169,30 @@ class DeltaGenerator(
             for (name, func) in mixin.__dict__.items():
                 if callable(func):
                     func.__module__ = self.__module__
+
+        # To support the `with dg` notation, DGs are arranged as a tree.
+        # The root of the tree should be _with_
+        self.parent = parent
+
+        self._with_dg = self
+
+    def __enter__(self):
+        self.root_dg().set_with_dg(self)
+
+    def __exit__(self, type, value, traceback):
+        # Reset the current dg back to MAIN
+        self.root_dg().set_with_dg(self.root_dg())
+        return False  # To re-raise any exceptions
+
+    def root_dg(self):
+        """Recursively traverse up the DG tree to find the root DG"""
+        return self.parent.root_dg() if self.parent else self
+
+    def get_with_dg(self) -> DeltaGenerator:
+        return self._with_dg
+
+    def set_with_dg(self, dg):
+        self._with_dg = dg
 
     def __getattr__(self, name):
         import streamlit as st
@@ -301,6 +328,7 @@ class DeltaGenerator(
                 cursor=self._cursor.get_locked_cursor(
                     delta_type=delta_type, last_index=last_index
                 ),
+                parent=self,
             )
         else:
             # If the message was not enqueued, just return self since it's a
@@ -327,7 +355,9 @@ class DeltaGenerator(
         block_cursor = cursor.RunningCursor(
             path=self._cursor.path + (self._cursor.index,)
         )
-        block_dg = DeltaGenerator(container=self._container, cursor=block_cursor)
+        block_dg = DeltaGenerator(
+            container=self._container, cursor=block_cursor, parent=self
+        )
 
         # Must be called to increment this cursor's index.
         self._cursor.get_locked_cursor(last_index=None)
