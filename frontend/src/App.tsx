@@ -28,6 +28,7 @@ import {
   DialogProps,
   DialogType,
   StreamlitDialog,
+  EditScriptDialogClass,
 } from "components/core/StreamlitDialog/"
 import { ConnectionManager } from "lib/ConnectionManager"
 import { WidgetStateManager } from "lib/WidgetStateManager"
@@ -180,6 +181,9 @@ export class App extends PureComponent<Props, State> {
 
     // The c key clears the cache.
     c: (): void => this.openClearCacheDialog(),
+
+    // The e key allows you to edit the script.
+    e: (): void => this.openUpdateScriptDialog(),
 
     esc: this.props.screenCast.stopRecording,
   }
@@ -845,6 +849,32 @@ export class App extends PureComponent<Props, State> {
     }
   }
 
+  openUpdateScriptDialog = (): void => {
+    if (this.isServerConnected()) {
+      const newDialog: DialogProps = {
+        type: DialogType.UPDATE_SCRIPT,
+        updateScript: this.updateScript,
+        defaultAction: () => {},
+        onClose: () => {},
+        contents: `import streamlit as st\nst.title('default contents')`,
+      }
+      // This will be called if enter is pressed.
+      this.openDialog(newDialog)
+    }
+  }
+
+  updateScript = (contents: string): void => {
+    this.closeDialog()
+    if (this.isServerConnected()) {
+      const backMsg = new BackMsg({
+        updateScript: contents,
+      })
+      this.sendBackMsg(backMsg)
+      // TODO: Then rerun? With 1s delay?
+      // Or turn on "Always rerun"?
+    }
+  }
+
   /**
    * Sends a message back to the server.
    */
@@ -940,6 +970,7 @@ export class App extends PureComponent<Props, State> {
                 shareCallback={this.shareReport}
                 quickRerunCallback={this.rerunScript}
                 clearCacheCallback={this.openClearCacheDialog}
+                editScriptCallback={this.openUpdateScriptDialog}
                 settingsCallback={this.settingsCallback}
                 aboutCallback={this.aboutCallback}
                 screencastCallback={this.screencastCallback}

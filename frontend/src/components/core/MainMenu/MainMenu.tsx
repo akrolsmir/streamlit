@@ -45,6 +45,9 @@ interface Props {
   /** Clear the cache. */
   clearCacheCallback: () => void
 
+  /** Edit the script. */
+  editScriptCallback: () => void
+
   /** Show the screen recording dialog. */
   screencastCallback: () => void
 
@@ -118,6 +121,14 @@ class MainMenu extends PureComponent<Props, State> {
           >
             <span>Clear cache</span>
             <span className="shortcut">C</span>
+          </DropdownItem>
+
+          <DropdownItem
+            disabled={isServerDisconnected}
+            onClick={this.props.editScriptCallback}
+          >
+            <span>Edit script</span>
+            <span className="shortcut">E</span>
           </DropdownItem>
 
           <DropdownItem divider />

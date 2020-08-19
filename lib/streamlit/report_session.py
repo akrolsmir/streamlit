@@ -413,6 +413,10 @@ class ReportSession(object):
         msg.report_finished = status
         self.enqueue(msg)
 
+    def handle_update_script_request(self, updated_script):
+        with open(self._report.script_path, "w") as script:
+            script.write(updated_script)
+
     def handle_rerun_script_request(self, client_state=None, is_preheat=False):
         """Tell the ScriptRunner to re-run its report.
 

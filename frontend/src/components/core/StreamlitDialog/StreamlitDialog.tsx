@@ -51,6 +51,7 @@ export type DialogProps =
   | UploadProgressProps
   | UploadedProps
   | WarningProps
+  | EditScriptProps
 
 export enum DialogType {
   ABOUT = "about",
@@ -62,6 +63,7 @@ export enum DialogType {
   UPLOAD_PROGRESS = "uploadProgress",
   UPLOADED = "uploaded",
   WARNING = "warning",
+  UPDATE_SCRIPT = "updateScript",
 }
 
 export function StreamlitDialog(dialogProps: DialogProps): ReactNode {
@@ -84,6 +86,8 @@ export function StreamlitDialog(dialogProps: DialogProps): ReactNode {
       return uploadedDialog(dialogProps)
     case DialogType.WARNING:
       return warningDialog(dialogProps)
+    case DialogType.UPDATE_SCRIPT:
+      return editScriptDialog(dialogProps)
     case undefined:
       return noDialog(dialogProps)
     default:
@@ -166,6 +170,89 @@ function clearCacheDialog(props: ClearCacheProps): ReactElement {
       </BasicDialog>
     </HotKeys>
   )
+}
+
+/**
+ * Shows the editScript dialog.
+ */
+function editScriptDialog(props: EditScriptProps): ReactElement {
+  return <EditScriptDialogClass {...props} />
+}
+
+// TODO: Separate into its own file like SettingsDialog
+interface EditScriptProps {
+  type: DialogType.UPDATE_SCRIPT
+  /** callback to send the clear_cache request to the Proxy */
+  updateScript: (script: string) => void
+
+  /** callback to close the dialog */
+  onClose: PlainEventHandler
+
+  /** callback to run the default action */
+  defaultAction: () => void
+
+  contents: string
+}
+
+interface EditScriptState {
+  value: string
+}
+
+export class EditScriptDialogClass extends React.PureComponent<
+  EditScriptProps,
+  EditScriptState
+> {
+  constructor(props: EditScriptProps) {
+    super(props)
+    this.state = {
+      value: props.contents,
+    }
+  }
+
+  private textUpdated = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ value: event.target.value })
+  }
+
+  render() {
+    const keyHandlers = {
+      enter: () => this.props.defaultAction(),
+    }
+
+    // Not sure exactly why attach is necessary on the HotKeys
+    // component here but it's not working without it
+    return (
+      <HotKeys handlers={keyHandlers} attach={window}>
+        <BasicDialog onClose={this.props.onClose}>
+          <ModalBody>
+            <div>
+              Edit the Python script:
+              <Input
+                type="textarea"
+                name="text"
+                id="exampleText"
+                rows={20}
+                cols={100}
+                value={this.state.value}
+                onChange={this.textUpdated}
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button outline color="secondary" onClick={this.props.onClose}>
+              Cancel
+            </Button>{" "}
+            <Button
+              outline
+              color="primary"
+              onClick={event => this.props.updateScript(this.state.value)}
+            >
+              Update!
+            </Button>
+          </ModalFooter>
+        </BasicDialog>
+      </HotKeys>
+    )
+  }
 }
 
 interface RerunScriptProps {
