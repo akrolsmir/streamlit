@@ -14,8 +14,30 @@
 
 import streamlit as st
 
-with st.echo():
+with st.echo("below"):
     with st.sidebar:
-        st.with_markdown("Markdown")
+        st.write("Markdown")
         "# magic"
     "And now I'm free!"
+
+    c1, c2, c3 = st.beta_columns(3)
+    c1.title("First column")
+    with c2:
+        "## Second column"
+    c3.slider("Third column")
+
+# def my_widget(test):
+#     s = st.slider(f"Test result: {test}", key=test)
+#     c = st.checkbox("10 points of extra credit?", key=test)
+#     score = s + 10 if c else 0
+#     f"You got {score} points!"
+#     return score
+
+
+# c1, c2, c3 = st.beta_columns(3)
+# with c1:
+#     midterm = my_widget("midterm")
+# with c3:
+#     final = my_widget("final")
+# with c2:
+#     f"Midterm: {midterm}, Final: {final}"
