@@ -43,6 +43,9 @@ export interface Elements {
  *  element: SimpleElement | BlockElement
  *  reportId: string
  *  metadata: IForwardMsgMetadata
+ *
+ *  New:
+ *  layout: Delta.Block.Layout (VERTICAL | HORIZONTAL)
  * }
  */
 export type ReportElement = ImmutableMap<string, any>
@@ -86,11 +89,18 @@ export function applyDelta(
         )
       )
     },
-    newBlock: () => {
+    addBlock: (deltaBlock: any) => {
+      // deltaBlock is now an ImmutableMap, not a Delta.Block... sad
       elements[container] = elements[container].updateIn(
         deltaPath,
         reportElement =>
-          handleNewBlockMessage(container, reportElement, reportId, metadata)
+          handleAddBlockMessage(
+            container,
+            reportElement,
+            reportId,
+            metadata,
+            deltaBlock
+          )
       )
     },
     addRows: (namedDataSet: NamedDataSet) => {
@@ -135,18 +145,24 @@ function handleNewElementMessage(
   })
 }
 
-function handleNewBlockMessage(
+function handleAddBlockMessage(
   container: Container,
   reportElement: ReportElement,
   reportId: string,
-  metadata: IForwardMsgMetadata
+  metadata: IForwardMsgMetadata,
+  deltaBlock: any
 ): ReportElement {
   MetricsManager.current.incrementDeltaCounter(container)
   MetricsManager.current.incrementDeltaCounter("new block")
 
   // TODO: isn't this always the case?
   if (!reportElement) {
-    return ImmutableMap({ element: List(), reportId, metadata })
+    return ImmutableMap({
+      element: List(),
+      reportId,
+      metadata,
+      layout: deltaBlock.get("layout"),
+    })
   }
 
   if (reportElement.get("element") instanceof List) {

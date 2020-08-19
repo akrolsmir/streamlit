@@ -24,6 +24,7 @@ from streamlit.errors import StreamlitAPIException, StreamlitDeprecationWarning
 from streamlit.errors import NoSessionContext
 from streamlit.proto import BlockPath_pb2
 from streamlit.proto import ForwardMsg_pb2
+from streamlit.proto.Delta_pb2 import Delta as DeltaProto
 from streamlit.proto.Element_pb2 import Element
 from streamlit.logger import get_logger
 
@@ -308,12 +309,14 @@ class DeltaGenerator(
 
         return _value_or_dg(return_value, output_dg)
 
-    def _block(self):
+    def _block(self, layout=DeltaProto.Block.VERTICAL):
         if self._container is None or self._cursor is None:
             return self
 
         msg = ForwardMsg_pb2.ForwardMsg()
-        msg.delta.new_block = True
+        block_proto = DeltaProto.Block()
+        block_proto.layout = layout
+        msg.delta.add_block.MergeFrom(block_proto)
         msg.metadata.parent_block.container = self._container
         msg.metadata.parent_block.path[:] = self._cursor.path
         msg.metadata.delta_id = self._cursor.index
@@ -332,6 +335,14 @@ class DeltaGenerator(
         _enqueue_message(msg)
 
         return block_dg
+
+    def columns(self, number):
+        # TODO: Enforce that this is only called from the Main DG
+        row = self._block(layout=DeltaProto.Block.HORIZONTAL)
+        return [row._block() for _ in range(number)]
+
+    def horizontal(self):
+        return self._block(layout=DeltaProto.Block.HORIZONTAL)
 
     def favicon(
         self, element, image, clamp=False, channels="RGB", format="JPEG",

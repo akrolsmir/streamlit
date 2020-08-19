@@ -181,6 +181,8 @@ warning = _main.warning  # noqa: E221
 write = _main.write  # noqa: E221
 beta_color_picker = _main.beta_color_picker  # noqa: E221
 beta_block = _main._block  # noqa: E221
+beta_columns = _main.columns  # noqa: E221
+beta_horizontal = _main.horizontal  # noqa: E221
 
 # Config
 
