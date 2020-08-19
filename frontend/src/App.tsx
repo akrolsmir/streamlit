@@ -574,7 +574,6 @@ export class App extends PureComponent<Props, State> {
             simpleElement,
             reportId
           )
-          return clearedElements.size > 0 ? clearedElements : null
           return clearedElements.size > 0
             ? reportElement.set("element", clearedElements)
             : null // This assumes not a list!

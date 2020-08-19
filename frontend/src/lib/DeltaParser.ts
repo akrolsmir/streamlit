@@ -28,7 +28,9 @@ import { MetricsManager } from "lib/MetricsManager"
 import { requireNonNull } from "lib/utils"
 
 type Container = "main" | "sidebar"
+// Represents the actual protobuf Element.proto
 export type SimpleElement = ImmutableMap<string, any>
+// A list of things to render (e.g. main, sidebar, container)
 export interface BlockElement extends List<ReportElement> {}
 
 export interface Elements {
@@ -36,6 +38,13 @@ export interface Elements {
   sidebar: BlockElement
 }
 
+/**
+ * A single thing to render: {
+ *  element: SimpleElement | BlockElement
+ *  reportId: string
+ *  metadata: IForwardMsgMetadata
+ * }
+ */
 export type ReportElement = ImmutableMap<string, any>
 
 export function applyDelta(
@@ -55,11 +64,10 @@ export function applyDelta(
 
   const container =
     parentBlockContainer === BlockPath.Container.MAIN ? "main" : "sidebar"
-  const deltaPath = [...parentBlockPath, metadata.deltaId]
-  // Hack inclusion of nested blocks [1, 0, 2] => [1, "element", 0, "element", 2]
+  // Build the full path to a delta: [1, 0, 2] => [1, "element", 0, "element", 2]
   let deltaPath: any[] = [...parentBlockPath, metadata.deltaId]
   deltaPath = deltaPath.flatMap(path => [path, "element"])
-  deltaPath.pop()
+  deltaPath.pop() // Remove final "element" tag.
 
   dispatchOneOf(delta, "type", {
     newElement: (element: SimpleElement) => {
