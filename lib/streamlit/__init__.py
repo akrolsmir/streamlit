@@ -132,6 +132,7 @@ sidebar = _DeltaGenerator(
 )
 
 # DeltaGenerator methods:
+<<<<<<< HEAD
 
 altair_chart = _main.altair_chart  # noqa: E221
 area_chart = _main.area_chart  # noqa: E221
@@ -185,9 +186,65 @@ beta_color_picker = _main.beta_color_picker  # noqa: E221
 beta_block = _main._block  # noqa: E221
 beta_columns = _main.columns  # noqa: E221
 beta_horizontal = _main.horizontal  # noqa: E221
+=======
+# fmt: off
+
+altair_chart = lambda *args, **kwargs: _main.get_with_dg().altair_chart(*args, **kwargs)  # noqa: E221
+area_chart = lambda *args, **kwargs: _main.get_with_dg().area_chart(*args, **kwargs)  # noqa: E221
+audio = lambda *args, **kwargs: _main.get_with_dg().audio(*args, **kwargs)  # noqa: E221
+balloons = lambda *args, **kwargs: _main.get_with_dg().balloons(*args, **kwargs)  # noqa: E221
+bar_chart = lambda *args, **kwargs: _main.get_with_dg().bar_chart(*args, **kwargs)  # noqa: E221
+bokeh_chart = lambda *args, **kwargs: _main.get_with_dg().bokeh_chart(*args, **kwargs)  # noqa: E221
+button = lambda *args, **kwargs: _main.get_with_dg().button(*args, **kwargs)  # noqa: E221
+checkbox = lambda *args, **kwargs: _main.get_with_dg().checkbox(*args, **kwargs)  # noqa: E221
+code = lambda *args, **kwargs: _main.get_with_dg().code(*args, **kwargs)  # noqa: E221
+dataframe = lambda *args, **kwargs: _main.get_with_dg().dataframe(*args, **kwargs)  # noqa: E221
+date_input = lambda *args, **kwargs: _main.get_with_dg().date_input(*args, **kwargs)  # noqa: E221
+deck_gl_chart = lambda *args, **kwargs: _main.get_with_dg().deck_gl_chart(*args, **kwargs)  # noqa: E221
+pydeck_chart = lambda *args, **kwargs: _main.get_with_dg().pydeck_chart(*args, **kwargs)  # noqa: E221
+empty = lambda *args, **kwargs: _main.get_with_dg().empty(*args, **kwargs)  # noqa: E221
+error = lambda *args, **kwargs: _main.get_with_dg().error(*args, **kwargs)  # noqa: E221
+exception = lambda *args, **kwargs: _main.get_with_dg().exception(*args, **kwargs)  # noqa: E221
+file_uploader = lambda *args, **kwargs: _main.get_with_dg().file_uploader(*args, **kwargs)  # noqa: E221
+graphviz_chart = lambda *args, **kwargs: _main.get_with_dg().graphviz_chart(*args, **kwargs)  # noqa: E221
+header = lambda *args, **kwargs: _main.get_with_dg().header(*args, **kwargs)  # noqa: E221
+help = lambda *args, **kwargs: _main.get_with_dg().help(*args, **kwargs)  # noqa: E221
+image = lambda *args, **kwargs: _main.get_with_dg().image(*args, **kwargs)  # noqa: E221
+info = lambda *args, **kwargs: _main.get_with_dg().info(*args, **kwargs)  # noqa: E221
+json = lambda *args, **kwargs: _main.get_with_dg().json(*args, **kwargs)  # noqa: E221
+latex = lambda *args, **kwargs: _main.get_with_dg().latex(*args, **kwargs)  # noqa: E221
+line_chart = lambda *args, **kwargs: _main.get_with_dg().line_chart(*args, **kwargs)  # noqa: E221
+map = lambda *args, **kwargs: _main.get_with_dg().map(*args, **kwargs)  # noqa: E221
+markdown = lambda *args, **kwargs: _main.get_with_dg().markdown(*args, **kwargs)  # noqa: E221
+multiselect = lambda *args, **kwargs: _main.get_with_dg().multiselect(*args, **kwargs)  # noqa: E221
+number_input = lambda *args, **kwargs: _main.get_with_dg().number_input(*args, **kwargs)  # noqa: E221
+plotly_chart = lambda *args, **kwargs: _main.get_with_dg().plotly_chart(*args, **kwargs)  # noqa: E221
+progress = lambda *args, **kwargs: _main.get_with_dg().progress(*args, **kwargs)  # noqa: E221
+pyplot = lambda *args, **kwargs: _main.get_with_dg().pyplot(*args, **kwargs)  # noqa: E221
+radio = lambda *args, **kwargs: _main.get_with_dg().radio(*args, **kwargs)  # noqa: E221
+selectbox = lambda *args, **kwargs: _main.get_with_dg().selectbox(*args, **kwargs)  # noqa: E221
+slider = lambda *args, **kwargs: _main.get_with_dg().slider(*args, **kwargs)  # noqa: E221
+subheader = lambda *args, **kwargs: _main.get_with_dg().subheader(*args, **kwargs)  # noqa: E221
+success = lambda *args, **kwargs: _main.get_with_dg().success(*args, **kwargs)  # noqa: E221
+table = lambda *args, **kwargs: _main.get_with_dg().table(*args, **kwargs)  # noqa: E221
+text = lambda *args, **kwargs: _main.get_with_dg().text(*args, **kwargs)  # noqa: E221
+text_area = lambda *args, **kwargs: _main.get_with_dg().text_area(*args, **kwargs)  # noqa: E221
+text_input = lambda *args, **kwargs: _main.get_with_dg().text_input(*args, **kwargs)  # noqa: E221
+time_input = lambda *args, **kwargs: _main.get_with_dg().time_input(*args, **kwargs)  # noqa: E221
+title = lambda *args, **kwargs: _main.get_with_dg().title(*args, **kwargs)  # noqa: E221
+vega_lite_chart = lambda *args, **kwargs: _main.get_with_dg().vega_lite_chart(*args, **kwargs)  # noqa: E221
+video = lambda *args, **kwargs: _main.get_with_dg().video(*args, **kwargs)  # noqa: E221
+warning = lambda *args, **kwargs: _main.get_with_dg().warning(*args, **kwargs)  # noqa: E221
+write = lambda *args, **kwargs: _main.get_with_dg().write(*args, **kwargs)  # noqa: E221
+beta_color_picker = lambda *args, **kwargs: _main.get_with_dg().beta_color_picker(*args, **kwargs)  # noqa: E221
+beta_block = lambda *args, **kwargs: _main.get_with_dg()._block(*args, **kwargs)  # noqa: E221
+beta_columns = lambda *args, **kwargs: _main.get_with_dg().columns(*args, **kwargs)  # noqa: E221
+beta_horizontal = lambda *args, **kwargs: _main.get_with_dg().horizontal(*args, **kwargs)  # noqa: E221
+>>>>>>> ef75cad9... [with] Wrap all st.foo() calls
 with_markdown = lambda *args, **kwargs: _main.get_with_dg().markdown(*args, **kwargs)
 with_write = lambda *args, **kwargs: _main.get_with_dg().write(*args, **kwargs)
 
+# fmt: on
 
 # Config
 
