@@ -36,6 +36,9 @@ message Initialize {
   // This is used to associate uploaded files with the client that uploaded
   // them.
   string session_id = 6;
+
+  // The contents of the actual script, for editing.
+  string report_code = 7;
 }
 
 message Config {

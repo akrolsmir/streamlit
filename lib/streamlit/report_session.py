@@ -391,6 +391,8 @@ class ReportSession(object):
         imsg.command_line = self._report.command_line
         imsg.session_id = self.id
 
+        imsg.report_code = self.read_script()
+
         self.enqueue(msg)
 
     def _enqueue_new_report_message(self):
@@ -412,6 +414,10 @@ class ReportSession(object):
         msg = ForwardMsg()
         msg.report_finished = status
         self.enqueue(msg)
+
+    def read_script(self):
+        with open(self._report.script_path) as script:
+            return script.read()
 
     def handle_update_script_request(self, updated_script):
         with open(self._report.script_path, "w") as script:

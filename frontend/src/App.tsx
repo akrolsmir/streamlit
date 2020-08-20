@@ -28,7 +28,6 @@ import {
   DialogProps,
   DialogType,
   StreamlitDialog,
-  EditScriptDialogClass,
 } from "components/core/StreamlitDialog/"
 import { ConnectionManager } from "lib/ConnectionManager"
 import { WidgetStateManager } from "lib/WidgetStateManager"
@@ -92,6 +91,7 @@ interface State {
   reportName: string
   reportHash: string | null
   reportRunState: ReportRunState
+  reportCode: string
   userSettings: UserSettings
   dialog?: DialogProps | null
   sharingEnabled?: boolean
@@ -143,6 +143,7 @@ export class App extends PureComponent<Props, State> {
       reportId: "<null>",
       reportHash: null,
       reportRunState: ReportRunState.NOT_RUNNING,
+      reportCode: "",
       userSettings: {
         wideMode: false,
         runOnSave: false,
@@ -357,6 +358,7 @@ export class App extends PureComponent<Props, State> {
       userInfo,
       config,
       sessionState,
+      reportCode,
     } = initializeMsg
 
     if (
@@ -364,7 +366,8 @@ export class App extends PureComponent<Props, State> {
       !environmentInfo ||
       !userInfo ||
       !config ||
-      !sessionState
+      !sessionState ||
+      !reportCode
     ) {
       throw new Error("InitializeMsg is missing a required field")
     }
@@ -395,6 +398,7 @@ export class App extends PureComponent<Props, State> {
 
     this.setState({
       sharingEnabled: Boolean(config.sharingEnabled),
+      reportCode,
     })
 
     this.handleSessionStateChanged(sessionState)
@@ -864,13 +868,14 @@ with st.echo("below"):
     c3.slider("Third column")`
 
   openUpdateScriptDialog = (): void => {
+    // TODO: Block while script is running.
     if (this.isServerConnected()) {
       const newDialog: DialogProps = {
         type: DialogType.UPDATE_SCRIPT,
         updateScript: this.updateScript,
         defaultAction: () => {},
         onClose: () => {},
-        contents: this.defaultPython,
+        contents: this.state.reportCode || this.defaultPython,
       }
       // This will be called if enter is pressed.
       this.openDialog(newDialog)
@@ -880,12 +885,17 @@ with st.echo("below"):
   updateScript = (contents: string): void => {
     this.closeDialog()
     if (this.isServerConnected()) {
+      // Tell the server to change the script
       const backMsg = new BackMsg({
         updateScript: contents,
       })
       this.sendBackMsg(backMsg)
-      // TODO: Then rerun? With 1s delay?
-      // Or turn on "Always rerun"?
+      // Also update the script locally, in case user edits again
+      this.setState({
+        reportCode: contents,
+      })
+      // Rerun to see the changes
+      this.rerunScript()
     }
   }
 
