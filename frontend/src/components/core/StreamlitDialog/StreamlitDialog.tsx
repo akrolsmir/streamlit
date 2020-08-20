@@ -29,6 +29,10 @@ import { IException } from "autogen/proto"
 import { SessionInfo } from "lib/SessionInfo"
 import { Props as SettingsDialogProps, SettingsDialog } from "./SettingsDialog"
 
+import Editor from "react-simple-code-editor"
+import Prism from "prismjs"
+import "prismjs/components/prism-python"
+
 import "./StreamlitDialog.scss"
 
 type PlainEventHandler = () => void
@@ -195,7 +199,7 @@ interface EditScriptProps {
 }
 
 interface EditScriptState {
-  value: string
+  code: string
 }
 
 export class EditScriptDialogClass extends React.PureComponent<
@@ -205,35 +209,39 @@ export class EditScriptDialogClass extends React.PureComponent<
   constructor(props: EditScriptProps) {
     super(props)
     this.state = {
-      value: props.contents,
+      code: props.contents,
     }
   }
 
-  private textUpdated = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ value: event.target.value })
-  }
-
   render() {
+    const keyMap = {
+      // TODO: Hotkeys seem to be swallowed by the Editor =(
+      SUBMIT: "ctrl+enter",
+    }
+
     const keyHandlers = {
-      enter: () => this.props.defaultAction(),
+      SUBMIT: () => this.props.updateScript(this.state.code),
     }
 
     // Not sure exactly why attach is necessary on the HotKeys
     // component here but it's not working without it
     return (
-      <HotKeys handlers={keyHandlers} attach={window}>
+      <HotKeys keyMap={keyMap} handlers={keyHandlers} attach={window}>
         <BasicDialog onClose={this.props.onClose}>
           <ModalBody>
             <div>
               Edit the Python script:
-              <Input
-                type="textarea"
-                name="text"
-                id="exampleText"
-                rows={20}
-                cols={100}
-                value={this.state.value}
-                onChange={this.textUpdated}
+              <Editor
+                value={this.state.code}
+                onValueChange={code => this.setState({ code })}
+                highlight={code =>
+                  Prism.highlight(code, Prism.languages.python, "")
+                }
+                padding={10}
+                style={{
+                  fontFamily: '"Fira code", "Fira Mono", monospace',
+                  fontSize: "0.8rem",
+                }}
               />
             </div>
           </ModalBody>
@@ -244,7 +252,7 @@ export class EditScriptDialogClass extends React.PureComponent<
             <Button
               outline
               color="primary"
-              onClick={event => this.props.updateScript(this.state.value)}
+              onClick={event => this.props.updateScript(this.state.code)}
             >
               Update!
             </Button>
