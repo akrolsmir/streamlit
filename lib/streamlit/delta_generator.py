@@ -14,7 +14,6 @@
 
 """Allows us to create and absorb changes (aka Deltas) to elements."""
 
-from __future__ import annotations
 import functools
 
 from streamlit import caching
@@ -188,7 +187,7 @@ class DeltaGenerator(
         """Recursively traverse up the DG tree to find the root DG"""
         return self.parent.root_dg() if self.parent else self
 
-    def get_with_dg(self) -> DeltaGenerator:
+    def get_with_dg(self):
         return self._with_dg
 
     def set_with_dg(self, dg):
