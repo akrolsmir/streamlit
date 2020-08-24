@@ -152,7 +152,7 @@ class DeltaGenerator(
         # - None: if this is the running DeltaGenerator for a top-level
         #   container (MAIN or SIDEBAR)
         # - RunningCursor: if this is the running DeltaGenerator for a
-        #   non-top-level container (created with dg._block())
+        #   non-top-level container (created with dg.container())
         # - LockedCursor: if this is a locked DeltaGenerator returned by some
         #   other DeltaGenerator method. E.g. the dg returned in dg =
         #   st.text("foo").
@@ -336,7 +336,9 @@ class DeltaGenerator(
 
         return _value_or_dg(return_value, output_dg)
 
-    def _block(self, layout=DeltaProto.Block.VERTICAL):
+    # Note: st.container() is user-facing name for block API.
+    # self._container is a pointer to whether this DG lives in MAIN or SIDEBAR.
+    def container(self, layout=DeltaProto.Block.VERTICAL):
         if self._container is None or self._cursor is None:
             return self
 
@@ -367,11 +369,11 @@ class DeltaGenerator(
 
     def columns(self, number):
         # TODO: Enforce that this is only called from the Main DG
-        row = self._block(layout=DeltaProto.Block.HORIZONTAL)
-        return [row._block() for _ in range(number)]
+        row = self.container(layout=DeltaProto.Block.HORIZONTAL)
+        return [row.container() for _ in range(number)]
 
     def horizontal(self):
-        return self._block(layout=DeltaProto.Block.HORIZONTAL)
+        return self.container(layout=DeltaProto.Block.HORIZONTAL)
 
     def favicon(
         self, element, image, clamp=False, channels="RGB", format="JPEG",

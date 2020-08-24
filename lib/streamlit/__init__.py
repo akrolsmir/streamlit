@@ -132,61 +132,6 @@ sidebar = _DeltaGenerator(
 )
 
 # DeltaGenerator methods:
-<<<<<<< HEAD
-
-altair_chart = _main.altair_chart  # noqa: E221
-area_chart = _main.area_chart  # noqa: E221
-audio = _main.audio  # noqa: E221
-balloons = _main.balloons  # noqa: E221
-bar_chart = _main.bar_chart  # noqa: E221
-bokeh_chart = _main.bokeh_chart  # noqa: E221
-button = _main.button  # noqa: E221
-checkbox = _main.checkbox  # noqa: E221
-code = _main.code  # noqa: E221
-dataframe = _main.dataframe  # noqa: E221
-date_input = _main.date_input  # noqa: E221
-deck_gl_chart = _main.deck_gl_chart  # noqa: E221
-pydeck_chart = _main.pydeck_chart  # noqa: E221
-empty = _main.empty  # noqa: E221
-error = _main.error  # noqa: E221
-exception = _main.exception  # noqa: E221
-file_uploader = _main.file_uploader  # noqa: E221
-graphviz_chart = _main.graphviz_chart  # noqa: E221
-header = _main.header  # noqa: E221
-help = _main.help  # noqa: E221
-image = _main.image  # noqa: E221
-info = _main.info  # noqa: E221
-json = _main.json  # noqa: E221
-latex = _main.latex  # noqa: E221
-line_chart = _main.line_chart  # noqa: E221
-map = _main.map  # noqa: E221
-markdown = _main.markdown  # noqa: E221
-multiselect = _main.multiselect  # noqa: E221
-number_input = _main.number_input  # noqa: E221
-plotly_chart = _main.plotly_chart  # noqa: E221
-progress = _main.progress  # noqa: E221
-pyplot = _main.pyplot  # noqa: E221
-radio = _main.radio  # noqa: E221
-selectbox = _main.selectbox  # noqa: E221
-select_slider = _main.select_slider  # noqa: E221
-slider = _main.slider  # noqa: E221
-subheader = _main.subheader  # noqa: E221
-success = _main.success  # noqa: E221
-table = _main.table  # noqa: E221
-text = _main.text  # noqa: E221
-text_area = _main.text_area  # noqa: E221
-text_input = _main.text_input  # noqa: E221
-time_input = _main.time_input  # noqa: E221
-title = _main.title  # noqa: E221
-vega_lite_chart = _main.vega_lite_chart  # noqa: E221
-video = _main.video  # noqa: E221
-warning = _main.warning  # noqa: E221
-write = _main.write  # noqa: E221
-beta_color_picker = _main.beta_color_picker  # noqa: E221
-beta_block = _main._block  # noqa: E221
-beta_columns = _main.columns  # noqa: E221
-beta_horizontal = _main.horizontal  # noqa: E221
-=======
 # fmt: off
 
 altair_chart = lambda *args, **kwargs: _main.get_with_dg().altair_chart(*args, **kwargs)  # noqa: E221
@@ -237,12 +182,9 @@ video = lambda *args, **kwargs: _main.get_with_dg().video(*args, **kwargs)  # no
 warning = lambda *args, **kwargs: _main.get_with_dg().warning(*args, **kwargs)  # noqa: E221
 write = lambda *args, **kwargs: _main.get_with_dg().write(*args, **kwargs)  # noqa: E221
 beta_color_picker = lambda *args, **kwargs: _main.get_with_dg().beta_color_picker(*args, **kwargs)  # noqa: E221
-beta_block = lambda *args, **kwargs: _main.get_with_dg()._block(*args, **kwargs)  # noqa: E221
-beta_columns = lambda *args, **kwargs: _main.get_with_dg().columns(*args, **kwargs)  # noqa: E221
-beta_horizontal = lambda *args, **kwargs: _main.get_with_dg().horizontal(*args, **kwargs)  # noqa: E221
->>>>>>> ef75cad9... [with] Wrap all st.foo() calls
-with_markdown = lambda *args, **kwargs: _main.get_with_dg().markdown(*args, **kwargs)
-with_write = lambda *args, **kwargs: _main.get_with_dg().write(*args, **kwargs)
+container = lambda *args, **kwargs: _main.get_with_dg().container(*args, **kwargs)  # noqa: E221
+columns = lambda *args, **kwargs: _main.get_with_dg().columns(*args, **kwargs)  # noqa: E221
+horizontal = lambda *args, **kwargs: _main.get_with_dg().horizontal(*args, **kwargs)  # noqa: E221
 
 # fmt: on
 
@@ -527,7 +469,7 @@ def echo(code_location="above"):
 def _transparent_write(*args):
     """This is just st.write, but returns the arguments you passed to it."""
     # Used by "Magic" calls
-    with_write(*args)
+    write(*args)
     if len(args) == 1:
         return args[0]
     return args
@@ -579,7 +521,7 @@ def _maybe_print_repl_warning():
 
 def stop():
     """Stops execution immediately.
-    
+
     Streamlit will not run any statements after `st.stop()`.
     We recommend rendering a message to explain why the script has stopped.
     When run outside of Streamlit, this will raise an Exception.
