@@ -156,6 +156,7 @@ function handleAddBlockMessage(
   MetricsManager.current.incrementDeltaCounter("new block")
 
   // TODO: isn't this always the case?
+  // No! On rerun it's not true - rerun reuses existing reportElements.
   if (!reportElement) {
     return ImmutableMap({
       element: List(),
@@ -165,11 +166,14 @@ function handleAddBlockMessage(
     })
   }
 
+  // Reusing an existing reportElement (aka this is a rerun)
   if (reportElement.get("element") instanceof List) {
-    return reportElement
+    return reportElement.set("layout", deltaBlock.get("layout"))
   }
 
-  return reportElement.set("element", List())
+  return reportElement
+    .set("element", List())
+    .set("layout", deltaBlock.get("layout"))
 }
 
 function handleAddRowsMessage(
