@@ -78,8 +78,13 @@ def _set_widget_id(
     if widget_func_name is None:
         widget_func_name = element_type
 
-    # Identify the widget with a hash of type + contents
-    element_hash = hash((element_type, element_proto.SerializeToString()))
+    # Should work, but making a global call to find the path is a code smell
+    import streamlit
+
+    path = streamlit._main.get_with_dg().path_to_main()
+
+    # Widgets are uniquely identified by a hash of path + type + contents
+    element_hash = hash((path, element_type, element_proto.SerializeToString()))
     if user_key is not None:
         widget_id = "%s-%s" % (user_key, element_hash)
     else:

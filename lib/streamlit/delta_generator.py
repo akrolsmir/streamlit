@@ -193,6 +193,10 @@ class DeltaGenerator(
     def set_with_dg(self, dg):
         self._with_dg = dg
 
+    def path_to_main(self):
+        """ Used to disambiguate widgets in different DGs"""
+        return self._cursor.path
+
     def __getattr__(self, name):
         import streamlit as st
 
