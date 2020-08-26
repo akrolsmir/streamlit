@@ -170,7 +170,7 @@ class CustomComponent:
         # when we settle on an improved API in a post-layout world.
         element = Element()
         return_value = marshall_component(element)
-        result = streamlit._main._enqueue(
+        result = streamlit._main.get_with_dg()._enqueue(
             "component_instance", element.component_instance, return_value
         )
 
