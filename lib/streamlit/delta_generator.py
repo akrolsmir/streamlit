@@ -195,7 +195,7 @@ class DeltaGenerator(
 
     def path_to_main(self):
         """ Used to disambiguate widgets in different DGs"""
-        return self._cursor.path
+        return (self.container, self._cursor.path)
 
     def __getattr__(self, name):
         import streamlit as st
