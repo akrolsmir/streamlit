@@ -553,7 +553,7 @@ export class App extends PureComponent<Props, State> {
             return e.get(type).get("id") as string
           })
           .filter(id => id != null)
-        this.widgetMgr.clean(activeWidgetIds)
+        this.widgetMgr.clean(activeWidgetIds) // or here
       }
 
       // Tell the ConnectionManager to increment the message cache run
@@ -614,7 +614,7 @@ export class App extends PureComponent<Props, State> {
       },
       () => {
         this.elementListBuffer = this.state.elements
-        this.widgetMgr.clean(fromJS([]))
+        this.widgetMgr.clean(fromJS([])) // could be here
       }
     )
   }

@@ -106,13 +106,15 @@ class Block extends PureComponent<Props> {
       .toArray()
       .map((reportElement: ReportElement, index: number): ReactNode | null => {
         // TODO: why are there undefined elements?
-        if (!reportElement) {
-          return null
-        }
+        // if (!reportElement) {
+        //   return null
+        // }
 
         const element = reportElement.get("element")
 
         if (element instanceof List) {
+          // There's a subcontainer nested inside this container;
+          // Recursively render the subcontainer.
           return this.renderBlock(
             element as BlockElement,
             index,
