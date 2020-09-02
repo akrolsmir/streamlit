@@ -32,6 +32,7 @@ with st.echo("below"):
     with c2:
         "## Second column"
         st.image(DOG_IMG, use_column_width=True)
+        st.help(st.image)
     with c3:
         st.header("Third column")
         st.image(RABBIT_IMG, use_column_width=True)

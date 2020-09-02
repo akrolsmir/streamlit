@@ -155,6 +155,7 @@ graphviz_chart = lambda *args, **kwargs: _main.get_with_dg().graphviz_chart(*arg
 header = lambda *args, **kwargs: _main.get_with_dg().header(*args, **kwargs)  # noqa: E221
 help = lambda *args, **kwargs: _main.get_with_dg().help(*args, **kwargs)  # noqa: E221
 image = lambda *args, **kwargs: _main.get_with_dg().image(*args, **kwargs)  # noqa: E221
+image = _main.image
 info = lambda *args, **kwargs: _main.get_with_dg().info(*args, **kwargs)  # noqa: E221
 json = lambda *args, **kwargs: _main.get_with_dg().json(*args, **kwargs)  # noqa: E221
 latex = lambda *args, **kwargs: _main.get_with_dg().latex(*args, **kwargs)  # noqa: E221

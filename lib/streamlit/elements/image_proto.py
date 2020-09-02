@@ -103,6 +103,7 @@ class ImageMixin:
            height: 630px
 
         """
+        dg = dg.get_with_dg() if dg.is_root() else dg
 
         format = kwargs.get("format")
         if format != None:

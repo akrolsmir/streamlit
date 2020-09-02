@@ -187,6 +187,9 @@ class DeltaGenerator(
         """Recursively traverse up the DG tree to find the root DG"""
         return self.parent.root_dg() if self.parent else self
 
+    def is_root(self):
+        return self == self.root_dg()
+
     def get_with_dg(self):
         return self._with_dg
 
