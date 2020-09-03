@@ -22,7 +22,7 @@ import { dispatchOneOf } from "lib/immutableProto"
 import { ReportRunState } from "lib/ReportRunState"
 import { WidgetStateManager } from "lib/WidgetStateManager"
 import { makeElementWithInfoText } from "lib/utils"
-import { IContainer, IForwardMsgMetadata } from "autogen/proto"
+import { IForwardMsgMetadata, Delta, IContainer } from "autogen/proto"
 import { ReportElement, BlockElement, SimpleElement } from "lib/DeltaParser"
 import { FileUploadClient } from "lib/FileUploadClient"
 
@@ -95,28 +95,32 @@ interface Props {
   uploadClient: FileUploadClient
   widgetsDisabled: boolean
   componentRegistry: ComponentRegistry
+  layout?: Delta.Block.Layout
 }
 
 class Block extends PureComponent<Props> {
   private WithCollapsibleBlock = withCollapsible(Block)
 
+  /** Recursively transform this BLockElement and all children to React Nodes. */
   private renderElements = (width: number): ReactNode[] => {
     const elementsToRender = this.props.elements
 
-    // Transform Streamlit elements into ReactNodes.
     return elementsToRender
       .toArray()
       .map((reportElement: ReportElement, index: number): ReactNode | null => {
         const element = reportElement.get("element")
 
         if (element instanceof List) {
+          // Recursive case AKA a single container AKA node with children
           return this.renderBlock(
             element as BlockElement,
             index,
             width,
-            reportElement.get("metadata").container
+            reportElement.get("metadata").container,
+            reportElement.get("layout")
           )
         }
+        // Base case AKA a single element AKA leaf node in the render tree
         return this.renderElementWithErrorBoundary(reportElement, index, width)
       })
       .filter((node: ReactNode | null): ReactNode => node != null)
@@ -138,7 +142,8 @@ class Block extends PureComponent<Props> {
     element: BlockElement,
     index: number,
     width: number,
-    containerProps: IContainer
+    containerProps: IContainer,
+    layout: Delta.Block.Layout
   ): ReactNode {
     return (
       <div key={index} className="stBlock" style={{ width }}>
@@ -151,6 +156,7 @@ class Block extends PureComponent<Props> {
           uploadClient={this.props.uploadClient}
           widgetsDisabled={this.props.widgetsDisabled}
           componentRegistry={this.props.componentRegistry}
+          layout={layout}
           {...containerProps}
         />
       </div>
@@ -414,11 +420,27 @@ class Block extends PureComponent<Props> {
     })
   }
 
-  public render = (): ReactNode => (
-    <AutoSizer disableHeight={true}>
-      {({ width }) => this.renderElements(width)}
-    </AutoSizer>
-  )
+  public render = (): ReactNode => {
+    if (
+      this.props.layout &&
+      this.props.layout === Delta.Block.Layout.HORIZONTAL
+    ) {
+      // Create a horizontal block, with display:flex
+      // TODO: Figure out the width. We just pick a big number for now.
+      return (
+        <div className="stBlock-horiz" style={{ display: "flex" }}>
+          {this.renderElements(888)}
+        </div>
+      )
+    }
+
+    // Create a vertical block, whose width autosizes to the window width.
+    return (
+      <AutoSizer disableHeight={true}>
+        {({ width }) => this.renderElements(width)}
+      </AutoSizer>
+    )
+  }
 }
 
 export default Block

@@ -43,6 +43,7 @@ export interface Elements {
  *  element: SimpleElement | BlockElement
  *  reportId: string
  *  metadata: IForwardMsgMetadata
+ *  layout: Delta.Block.Layout (VERTICAL | HORIZONTAL)
  * }
  */
 export type ReportElement = ImmutableMap<string, any>
@@ -83,11 +84,12 @@ export function applyDelta(
         handleNewElementMessage(currentElement, element, reportId, metadata)
       )
     },
-    newBlock: () => {
+    addBlock: (deltaBlock: any) => {
+      const layout: Delta.Block.Layout = deltaBlock.get("layout")
       elements[topLevelBlock] = elements[topLevelBlock].updateIn(
         deltaPath,
         reportElement =>
-          handleNewBlockMessage(reportElement, reportId, metadata)
+          handleAddBlockMessage(reportElement, reportId, metadata, layout)
       )
     },
     addRows: (namedDataSet: NamedDataSet) => {
@@ -129,25 +131,17 @@ function handleNewElementMessage(
   })
 }
 
-function handleNewBlockMessage(
+function handleAddBlockMessage(
   reportElement: ReportElement,
   reportId: string,
-  metadata: IForwardMsgMetadata
+  metadata: IForwardMsgMetadata,
+  layout: Delta.Block.Layout
 ): ReportElement {
   MetricsManager.current.incrementDeltaCounter("new block")
 
-  // There's nothing at this node (aka first run), so initialize an empty list.
-  if (!reportElement) {
-    return ImmutableMap({ element: List(), reportId, metadata })
-  }
-
-  // This node was already a list of elements; no need to change anything.
-  if (reportElement.get("element") instanceof List) {
-    return reportElement.set("metadata", metadata)
-  }
-
-  // This node used to represent a single element; convert into an empty list.
-  return reportElement.set("element", List())
+  // Always create a new BlockElement (empty list).
+  // TODO: What bad thing happens if reportElement had existing children?
+  return ImmutableMap({ element: List(), reportId, metadata, layout })
 }
 
 function handleAddRowsMessage(

@@ -26,6 +26,7 @@ from streamlit.proto import BlockPath_pb2
 from streamlit.proto import Container_pb2
 from streamlit.proto import ForwardMsg_pb2
 from streamlit.proto.Element_pb2 import Element
+from streamlit.proto.Delta_pb2 import Delta as DeltaProto
 from streamlit.logger import get_logger
 
 from streamlit.elements.utils import NoValue
@@ -353,15 +354,24 @@ class DeltaGenerator(
 
         return _value_or_dg(return_value, output_dg)
 
-    def _container_block(self, container_msg=None):
+    def columns(self, number):
+        # TODO: Enforce that this is called from the Main DG, and not nested
+        row = self._block(layout=DeltaProto.Block.HORIZONTAL)
+        return [row._block() for _ in range(number)]
+
+    # Internal block element, to hide the 'layout' param from our users.
+    def _block(self, layout=DeltaProto.Block.VERTICAL, container_msg=None):
         # Switch to the active DeltaGenerator, in case we're in a `with` block.
         self = self._active_dg
 
+        # TODO: Merge self = self._active_dg here
         if self._container is None or self._cursor is None:
             return self
 
         msg = ForwardMsg_pb2.ForwardMsg()
-        msg.delta.new_block = True
+        block_proto = DeltaProto.Block()
+        block_proto.layout = layout
+        msg.delta.add_block.MergeFrom(block_proto)
         msg.metadata.parent_block.container = self._container
         msg.metadata.parent_block.path[:] = self._cursor.path
         msg.metadata.delta_id = self._cursor.index
@@ -385,7 +395,7 @@ class DeltaGenerator(
         return block_dg
 
     def container(self):
-        return self._container_block()
+        return self._block()
 
     def collapsible_container(self, label=None, collapsed=False):
         """Creates a collapsible container.
@@ -424,15 +434,10 @@ class DeltaGenerator(
         msg.collapsible = True
         msg.collapsed = collapsed
         msg.label = label
-        return self._container_block(container_msg=msg)
+        return self._block(container_msg=msg)
 
     def favicon(
-        self,
-        element,
-        image,
-        clamp=False,
-        channels="RGB",
-        format="JPEG",
+        self, element, image, clamp=False, channels="RGB", format="JPEG",
     ):
         """Set the page favicon to the specified image.
 

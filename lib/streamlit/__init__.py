@@ -182,6 +182,7 @@ write = _main.write  # noqa: E221
 beta_color_picker = _main.beta_color_picker  # noqa: E221
 container = _main.container  # noqa: E221
 collapsible_container = _main.collapsible_container  # noqa: E221
+columns = _main.columns  # noqa: E221
 
 # Config
 
