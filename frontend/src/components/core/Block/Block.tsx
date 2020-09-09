@@ -146,7 +146,7 @@ class Block extends PureComponent<Props> {
     layout: Delta.Block.Layout
   ): ReactNode {
     return (
-      <div key={index} className="stBlock" style={{ width }}>
+      <div key={index} className="stBlock" style={{ width, margin: "0 4px" }}>
         <this.WithCollapsibleBlock
           elements={element}
           reportId={this.props.reportId}
