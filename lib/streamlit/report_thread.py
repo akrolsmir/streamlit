@@ -53,13 +53,11 @@ class ReportContext(object):
         # cursor (type AbstractCursor).
         self.cursors = {}
         self.session_id = session_id
-        self._enqueue = enqueue
+        self.enqueue = enqueue
         self.query_string = query_string
         self.widgets = widgets
         self.widget_ids_this_run = widget_ids_this_run
         self.uploaded_file_mgr = uploaded_file_mgr
-        # set_page_config is allowed at most once, as the very first st.command
-        self._set_page_config_allowed = True
         # Stack of DGs used for the with block. The current one is at the end.
         self.dg_stack = []
 
@@ -67,22 +65,6 @@ class ReportContext(object):
         self.cursors = {}
         self.widget_ids_this_run.clear()
         self.query_string = query_string
-        # Permit set_page_config when the ReportContext is reused on a rerun
-        self._set_page_config_allowed = True
-
-    def enqueue(self, msg):
-        if msg.HasField("page_config_changed") and not self._set_page_config_allowed:
-            raise StreamlitAPIException(
-                "`beta_set_page_config()` can only be called once per app, "
-                + "and must be called as the first Streamlit command in your script.\n\n"
-                + "For more information refer to the [docs]"
-                + "(https://docs.streamlit.io/en/stable/api.html#streamlit.beta_set_page_config)."
-            )
-
-        if msg.HasField("delta") or msg.HasField("page_config_changed"):
-            self._set_page_config_allowed = False
-
-        self._enqueue(msg)
 
 
 class _WidgetIDSet(object):
