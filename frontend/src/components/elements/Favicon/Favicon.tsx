@@ -57,6 +57,14 @@ function overwriteFavicon(imageUrl: string): void {
   if (faviconElement) {
     faviconElement.href = imageUrl
   }
+
+  const appleFaviconElement: HTMLLinkElement | null = document.querySelector(
+    "link[rel='apple-touch-icon']"
+  )
+
+  if (appleFaviconElement) {
+    appleFaviconElement.href = imageUrl
+  }
 }
 
 // Return the emoji if it exists, or empty string otherwise
